@@ -2,7 +2,7 @@
 {% load static %}
 
 
-{% block title %}Dashboard | EdukAI{% endblock %}
+{% block title %}Inicio | EdukAI{% endblock %}
 
 {% block content %}
     {% if messages %}
@@ -27,7 +27,7 @@
             <!-- Bienvenida con logo -->
             <div class="welcome-card card-glass p-4 mb-4" style="min-width: 320px;">
                 <img src="{% static 'img/logo_frontal.png' %}" alt="Logo EdukAI" width="100" class="mb-3">
-                <h4>Bienvenido a Eduk<span class="text-gradient"></span> AI,<br>{{ user.username|capfirst }}</h4>
+                <h4>Bienvenido a Eduk<span class="text-gradient"></span>AI,<br>{{ user.username|capfirst }}</h4>
             </div>
 
             <!-- Contenido generado por IA -->

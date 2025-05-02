@@ -15,7 +15,6 @@ urlpatterns = [
     path('mis-apuntes/', views.mis_apuntes_view, name='mis_apuntes'),
     path('resumenes/', views.resumenes_view, name='resumenes'),
     path('preguntas/', views.preguntas_view, name='preguntas'),
-    path('comunidad', views.comunidad_view, name='comunidad'),
     path('historial-resultados/', views.historial_resultados_view, name='historial_resultados'),
 
     # Auth

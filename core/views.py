@@ -199,16 +199,12 @@ def welcome_view(request):
     return render(request, 'welcome.html')
 
 
-@never_cache
 def dashboard_view(request):
-    apuntes = Apunte.objects.filter(usuario=request.user).order_by('-creado')
-    return render(request, 'dashboard.html', {'apuntes': apuntes, 'active': 'dashboard'})
-
-
-@never_cache
-@login_required
-def comunidad_view(request):
-    return render(request, 'secciones/comunidad.html', {'active': 'comunidad'})
+    if request.user.is_authenticated:
+        apuntes = Apunte.objects.filter(usuario=request.user).order_by('-creado')
+        return render(request, 'dashboard.html', {'apuntes': apuntes, 'active': 'dashboard'})
+    else:
+        return render(request, 'dashboard.html', {'active': 'dashboard'})
 
 
 @never_cache
@@ -278,6 +274,7 @@ def perfil_view(request):
     })
 
 
+@never_cache
 @login_required
 def subir_apunte_view(request):
     if request.method == 'POST':
@@ -322,24 +319,28 @@ def subir_apunte_view(request):
     return render(request, 'secciones/subir_apunte.html', {'form': form, 'active': 'subir_apunte'})
 
 
+@never_cache
 @login_required
 def resumenes_view(request):
     resumenes = Apunte.objects.filter(usuario=request.user).exclude(resumen="").order_by('-creado')
     return render(request, 'secciones/resumenes.html', {'resumenes': resumenes, 'active': 'resumenes'})
 
 
+@never_cache
 @login_required
 def detalle_resumen_view(request, apunte_id):
     apunte = get_object_or_404(Apunte, id=apunte_id, usuario=request.user)
     return render(request, 'secciones/detalle_resumen.html', {'apunte': apunte, 'active': 'resumenes'})
 
 
+@never_cache
 @login_required
 def mis_apuntes_view(request):
     apuntes = Apunte.objects.filter(usuario=request.user).order_by('-creado')
     return render(request, 'secciones/mis_apuntes.html', {'apuntes': apuntes, 'active': 'mis_apuntes'})
 
 
+@never_cache
 @login_required
 def detalle_apuntes_view(request, apunte_id):
     apunte = get_object_or_404(Apunte, id=apunte_id, usuario=request.user)
@@ -347,6 +348,7 @@ def detalle_apuntes_view(request, apunte_id):
     return render(request, 'secciones/detalle_apuntes.html', {'apunte': apunte, 'active': 'mis_apuntes'})
 
 
+@never_cache
 @login_required
 def eliminar_apunte_view(request, apunte_id):
     apunte = get_object_or_404(Apunte, id=apunte_id, usuario=request.user)
@@ -359,18 +361,21 @@ def eliminar_apunte_view(request, apunte_id):
     return redirect('detalle_apunte', apunte_id=apunte_id)
 
 
+@never_cache
 @login_required
 def lastest_apunte_view(request):
     apuntes = Apunte.objects.filter(usuario=request.user).order_by('-creado')
     return render(request, 'dashboard.html', {'apuntes': apuntes, 'active': 'dashboard'})
 
 
+@never_cache
 @login_required
 def seleccionar_apunte_view(request):
     apuntes = Apunte.objects.filter(usuario=request.user).order_by('-creado')
     return render(request, 'secciones/generar_pregunta.html', {'apuntes': apuntes, 'active': 'preguntas'})
 
 
+@never_cache
 @login_required
 def generar_preguntas_view(request, apunte_id):
     apunte = get_object_or_404(Apunte, id=apunte_id, usuario=request.user)
@@ -441,9 +446,7 @@ def preguntas_view(request):
     })
 
 
-
-
-
+@never_cache
 @login_required
 def test_interactivo_view(request, apunte_id):
     # Obtener el apunte específico o devolver un 404 si no existe o no pertenece al usuario
@@ -459,12 +462,15 @@ def test_interactivo_view(request, apunte_id):
                   {'preguntas': preguntas, 'apunte': apunte, 'active': 'preguntas'})
 
 
-
+@never_cache
 @login_required
 def historial_resultados_view(request):
     resultados = ResultadoTest.objects.filter(usuario=request.user).select_related('apunte').order_by('-fecha')
-    return render(request, 'secciones/historial_tests.html', {'resultados': resultados, 'active': 'historial_resultados'})
+    return render(request, 'secciones/historial_tests.html',
+                  {'resultados': resultados, 'active': 'historial_resultados'})
 
+
+@never_cache
 @login_required
 @require_POST
 def guardar_resultado_test(request):
@@ -489,6 +495,8 @@ def guardar_resultado_test(request):
             return JsonResponse({'status': 'sin_mejora'})
     return JsonResponse({'status': 'nuevo'})
 
+
+@never_cache
 @login_required
 def exportar_test_pdf(request, apunte_id):
     apunte = Apunte.objects.get(id=apunte_id, usuario=request.user)

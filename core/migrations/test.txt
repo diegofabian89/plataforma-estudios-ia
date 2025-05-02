@@ -1,0 +1,206 @@
+# views.py
+from django.contrib.auth.views import PasswordResetView, PasswordResetDoneView, PasswordResetConfirmView
+from django.shortcuts import redirect, render
+from django.contrib.auth import get_user_model
+from django.contrib.auth.tokens import default_token_generator
+from django.utils.http import urlsafe_base64_encode, urlsafe_base64_decode
+from django.utils.encoding import force_bytes
+from django.core.mail import EmailMultiAlternatives
+from django.template.loader import render_to_string
+from django.contrib import messages
+from django.conf import settings
+
+User = get_user_model()
+
+class CustomPasswordResetView(PasswordResetView):
+    template_name = 'auth/password_reset.html'
+    email_template_name = 'auth/password_reset_email.html'
+    subject_template_name = 'auth/password_reset_subject.txt'
+    success_url = '/password-reset/done/'
+
+    def form_valid(self, form):
+        email = form.cleaned_data["email"]
+        user = User.objects.filter(email=email, is_active=True).first()
+
+        if user:
+            context = {
+                'email': email,
+                'domain': self.request.get_host(),
+                'site_name': 'EdukAI',
+                'uid': urlsafe_base64_encode(force_bytes(user.pk)),
+                'user': user,
+                'token': default_token_generator.make_token(user),
+                'protocol': 'https' if self.request.is_secure() else 'http',
+            }
+
+            subject = render_to_string(self.subject_template_name, context).strip()
+            html_email = render_to_string(self.email_template_name, context)
+
+            email_message = EmailMultiAlternatives(subject, '', settings.DEFAULT_FROM_EMAIL, [email])
+            email_message.attach_alternative(html_email, "text/html")
+            email_message.send()
+
+            return super().form_valid(form)
+        else:
+            messages.error(self.request, "No se encontró ninguna cuenta activa con ese correo.")
+            return self.form_invalid(form)
+
+class CustomPasswordResetConfirmView(PasswordResetConfirmView):
+    template_name = 'auth/password_reset_confirm.html'
+    success_url = '/reset/complete/'
+
+    def dispatch(self, request, uidb64=None, token=None, *args, **kwargs):
+        try:
+            uid = urlsafe_base64_decode(uidb64).decode()
+            user = User.objects.get(pk=uid)
+        except (TypeError, ValueError, OverflowError, User.DoesNotExist):
+            user = None
+
+        if user is None or not default_token_generator.check_token(user, token):
+            request.session['token_expired_email'] = user.email if user else ''
+            return redirect('password_reset')
+
+        return super().dispatch(request, uidb64, token, *args, **kwargs)
+
+
+# urls.py
+from django.urls import path
+from .views import (
+    CustomPasswordResetView,
+    CustomPasswordResetConfirmView,
+)
+from django.contrib.auth import views as auth_views
+
+urlpatterns = [
+    path('password-reset/', CustomPasswordResetView.as_view(), name='password_reset'),
+    path('password-reset/done/', auth_views.PasswordResetDoneView.as_view(
+        template_name='auth/password_reset_done.html'
+    ), name='password_reset_done'),
+    path('reset/<uidb64>/<token>/', CustomPasswordResetConfirmView.as_view(), name='password_reset_confirm'),
+    path('reset/complete/', auth_views.PasswordResetCompleteView.as_view(
+        template_name='auth/password_reset_complete.html'
+    ), name='password_reset_complete'),
+
+
+
+    # 📊 Flujo completo de Recuperación y Activación de Cuenta - EdukAI
+
+## 🔐 1. Registro de usuario
+- Usuario se registra con `CustomUserCreationForm`
+- Se crea el `User` con `is_active = False`
+- Se crea su `PerfilUsuario`
+- Se llama a `enviar_activacion(request, user)`
+  - Se genera token de activación y se envía por email
+
+---
+
+## 📬 2. Activación de cuenta
+- El usuario hace clic en el enlace recibido
+- Vista `activar_cuenta` verifica token:
+  - ✅ Si válido → `user.is_active = True` y muestra mensaje de éxito
+  - ❌ Si inválido/expirado → redirige a login con mensaje de error + botón para reenviar
+
+---
+
+## ♻️ 3. Reenviar activación
+- Vista `reenviar_activacion_view`
+  - Verifica si el email pertenece a un usuario inactivo
+  - Si existe → reenvía token de activación
+  - Si no → muestra error
+
+---
+
+## 🔑 4. Recuperar contraseña
+- Usuario accede a `/password-reset/`
+- Vista `CustomPasswordResetView`:
+  - ✅ Si el email existe y está activo → envía correo con enlace de token (HTML)
+  - ❌ Si no → muestra error y mantiene el formulario
+
+---
+
+## 🔁 5. Token expirado al intentar cambiar contraseña
+- Vista `CustomPasswordResetConfirmView`:
+  - Detecta si el token es inválido
+  - Guarda `token_expired_email` en sesión y redirige a `/password-reset/`
+- En `password_reset.html`, el email se precarga automáticamente en el formulario
+
+---
+
+## ✅ 6. Cambio de contraseña válido
+- El usuario accede desde el email con token válido
+- `PasswordResetConfirmView` muestra formulario
+- Al completar correctamente:
+  - Se redirige a `reset/complete/`
+  - Se muestra mensaje de éxito
+
+---
+
+## 💡 Extras útiles
+- `request.session.pop(...)` se usa para limpiar sesiones temporales
+- Todos los correos usan `EmailMultiAlternatives` con HTML
+- Se incluyen mensajes visuales de confirmación en cada paso
+- Se mantiene consistencia de estilo con EdukAI (`card-glass`, colores, botones)
+
+---
+
+¿Quieres convertir esto en una sección del README o documentarlo dentro del admin de tu proyecto?
+
+
+
+✅ Paso 1: Modificar views.py para permitir filtrar por categoría
+python
+Copiar
+Editar
+from .models import Apunte, Categoria
+
+@login_required
+def mis_apuntes_view(request):
+    categoria_id = request.GET.get('categoria')
+    categorias = Categoria.objects.all()
+
+    if categoria_id:
+        apuntes = Apunte.objects.filter(usuario=request.user, categoria_id=categoria_id).order_by('-creado')
+    else:
+        apuntes = Apunte.objects.filter(usuario=request.user).order_by('-creado')
+
+    return render(request, 'secciones/mis_apuntes.html', {
+        'apuntes': apuntes,
+        'categorias': categorias,
+        'categoria_seleccionada': int(categoria_id) if categoria_id else None,
+        'active': 'mis_apuntes'
+    })
+✅ Ahora mis_apuntes_view recibe un GET con el id de la categoría y filtra apuntes.
+
+✅ Paso 2: Modificar mis_apuntes.html
+Agrega arriba del listado de apuntes un pequeño filtro select:
+
+html
+Copiar
+Editar
+<form method="get" class="mb-4 d-flex align-items-center gap-3">
+    <select name="categoria" class="form-select" style="max-width: 300px;">
+        <option value="">Todas las categorías</option>
+        {% for categoria in categorias %}
+            <option value="{{ categoria.id }}" {% if categoria.id == categoria_seleccionada %}selected{% endif %}>
+                {{ categoria.nombre }}
+            </option>
+        {% endfor %}
+    </select>
+    <button type="submit" class="btn btn-primary">Filtrar</button>
+</form>
+✅ Así el usuario puede filtrar rápidamente entre Matemáticas, Historia, Programación, etc.
+
+✅ Paso 3: No olvides
+Recargar la página cuando elijas una categoría
+
+El botón “Filtrar” envía el GET sin problemas
+
+Si seleccionas "Todas las categorías" vuelve a mostrar todo
+
+🧠 Resultado:
+Verás una lista desplegable de categorías
+
+Al seleccionar una, solo verás los apuntes de esa categoría
+
+Mantendrá el mismo diseño y estilo bonito
+

@@ -1,0 +1,15 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>Inicio | EdukAI</title>
+</head>
+<body>
+    <h1>Bienvenido a EdukAI</h1>
+    {% if user.is_authenticated %}
+        <p>Hola {{ user.username }} 👋. Estás logueado.</p>
+    {% else %}
+        <p>Estás en modo invitado. Algunas funciones estarán limitadas.</p>
+    {% endif %}
+</body>
+</html>

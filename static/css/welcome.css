@@ -1,0 +1,108 @@
+/* Fondo general */
+body {
+    margin: 0;
+    background: linear-gradient(to right, #0f0c29, #302b63, #24243e);
+    font-family: 'Segoe UI', sans-serif;
+    color: #fff;
+    padding: 40px 10px;
+}
+
+/* Contenedor principal */
+.glass-container {
+    background: rgba(255, 255, 255, 0.08);
+    backdrop-filter: blur(14px);
+    -webkit-backdrop-filter: blur(14px);
+    border-radius: 20px;
+    box-shadow: 0 8px 40px rgba(0, 0, 0, 0.3);
+    width: 550px;
+    padding: 60px 40px;
+}
+
+/* Título principal */
+.glass-container h1 {
+    font-weight: 600;
+    font-size: 2.2rem;
+    margin-bottom: 0.4rem;
+}
+
+/* Texto explicativo */
+.glass-container p {
+    font-size: 0.7rem;
+    line-height: 1.6;
+    margin-bottom: 2rem;
+    color: #e2dded;
+}
+
+/* Efecto texto IA en gradiente */
+.text-gradient {
+    background: linear-gradient(to right, #c5b404, #9037fb);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+}
+
+/* Estilo de botones */
+.btn {
+    padding: 12px;
+    font-weight: 500;
+    font-size: 1rem;
+    transition: all 0.3s ease-in-out;
+    border-radius: 10px;
+}
+
+.btn-primary {
+    background: linear-gradient(to right, #290753, #025495);
+    border: none;
+}
+
+.btn-primary:hover {
+    background: linear-gradient(to right, #025495, #290753);
+    transform: scale(1.02);
+}
+
+.btn-outline-light {
+    border: 1px solid #ccc;
+    color: #ccc;
+}
+
+.btn-outline-light:hover {
+    color: #46194c;
+    border-color: #fff;
+    transform: scale(1.02);
+}
+
+.btn-outline-secondary {
+    border: 1px solid #777;
+    color: #aaa;
+    cursor: pointer;
+}
+
+.btn-outline-secondary:hover {
+    color: #ddd;
+    border-color: #aaa;
+    transform: scale(1.02);
+}
+.text-danger {
+    color: #ff7373;
+}
+
+.alert-danger {
+    background: rgba(255, 0, 0, 0.1);
+    border: 1px solid #ff7373;
+    color: #ff7373;
+    padding: 10px;
+    border-radius: 6px;
+    margin-bottom: 1rem;
+}
+.alert {
+    padding: 12px 20px;
+    border-radius: 8px;
+    margin-bottom: 20px;
+    opacity: 1;
+    transition: opacity 0.5s ease-in-out;
+}
+
+.alert-info {
+    background: rgba(0, 200, 255, 0.1);
+    border: 1px solid #00bfff;
+    color: #00bfff;
+}

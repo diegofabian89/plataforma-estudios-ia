@@ -1,0 +1,31 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}Mis Resúmenes | EdukAI{% endblock %}
+
+{% block content %}
+<div class="container">
+    <h3 class="text-white mb-4 text-center">Mis Resúm<span class="text-gradient">enes Generados</span></h3>
+
+    {% if resumenes %}
+        <div class="row g-4">
+            {% for apunte in resumenes %}
+            <div class="col-md-6 col-lg-4">
+                <div class="card glass-card p-4 h-100">
+                    <h5 class="text-white">Resumen: {{ apunte.titulo|truncatechars:30 }}</h5>
+                    <small class="text-muted">{{ apunte.categoria.nombre }}</small>
+                    <div class="glass-box mt-3">
+                        <p>{{ apunte.resumen|truncatechars:200 }}</p>
+                    </div>
+                    <a href="{% url 'detalle_resumen' apunte.id %}" class="btn btn-outline-light mt-3 w-100">Ver completo</a>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+    {% else %}
+        <div class="alert alert-warning mt-4">
+            No has generado ningún resumen todavía.
+        </div>
+    {% endif %}
+</div>
+{% endblock %}

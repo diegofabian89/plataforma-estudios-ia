@@ -1,0 +1,33 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}Generar Preguntas | EdukAI{% endblock %}
+
+{% block content %}
+    <div class="container">
+        <h2 class="mb-4">Selecciona un apu<span class="text-gradient">nte para generar preguntas</span></h2>
+        <p>Si no vez tus apuntes aquí sigue este link para subirlos <a href="{% url 'subir_apunte' %}"
+                                                                       class="bt_read_text ">Sube uno aquí.</a></p>
+        {% if apuntes %}
+            <div class="row g-4">
+
+                {% for apunte in apuntes %}
+                    <div class="col-md-6 col-lg-4">
+                        <div class="card glass-card p-4 h-100 text-white">
+                            <h5>{{ apunte.titulo }}</h5>
+                            <small class="text-muted">{{ apunte.categoria.nombre }}</small>
+                            <div class="mt-3">
+                                <a href="{% url 'generar_preguntas' apunte.id %}"
+                                   class="btn btn-outline-light mt-3 w-100">Generar preguntas</a>
+                            </div>
+                        </div>
+
+                    </div>
+                {% endfor %}
+            </div>
+        {% else %}
+
+        {% endif %}
+    </div>
+
+{% endblock %}

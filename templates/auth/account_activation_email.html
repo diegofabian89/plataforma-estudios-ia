@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>Activa tu cuenta | EdukAI</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', sans-serif;
+            background-color: #f5f5f5;
+            color: #333;
+            padding: 20px;
+        }
+        .email-container {
+            max-width: 600px;
+            margin: 0 auto;
+            background: #ffffff;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+        }
+        .btn {
+            display: inline-block;
+            padding: 12px 24px;
+            background-color: #6a11cb;
+            color: #fff;
+            text-decoration: none;
+            border-radius: 6px;
+            font-weight: bold;
+            margin-top: 20px;
+        }
+        .footer {
+            font-size: 0.85rem;
+            color: #888;
+            margin-top: 30px;
+        }
+        .text-gradient {
+            background: linear-gradient(to right, #c5b404, #9037fb);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+    </style>
+</head>
+<body>
+<div class="email-container">
+    <h1 class="mb-2">Eduk<span class="text-gradient">AI</span></h1>
+    <h2>¡Activa tu cuenta en EdukAI!</h2>
+    <p>Hola {{ user.username }},</p>
+    <p>Gracias por registrarte en EdukAI. Para completar tu registro y activar tu cuenta, haz clic en el siguiente botón:</p>
+
+    <a class="btn" href="{{ protocol }}://{{ domain }}{% url 'activate' uidb64=uid token=token %}">Activar cuenta</a>
+
+    <p class="footer">
+        Si tú no creaste esta cuenta, puedes ignorar este correo. El enlace expirará automáticamente.
+    </p>
+</div>
+</body>
+</html>

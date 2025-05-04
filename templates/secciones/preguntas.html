@@ -1,11 +1,12 @@
 {% extends "base.html" %}
 {% load static %}
+{% load widget_tweaks %}
 
 {% block title %}Mis Preguntas | EdukAI{% endblock %}
-
+{% block section_title %}<h3 class="text-white">Mis Preg<span class="text-gradient">untas Generadas</span></h3>{% endblock %}
 {% block content %}
-    <div class="container">
-        <h3 class="text-white mb-4 text-center">Mis Preg<span class="text-gradient">untas Generados</span></h3>
+    <div class="container v-100">
+
 
         {% if apuntes %}
             <div class="row g-4">

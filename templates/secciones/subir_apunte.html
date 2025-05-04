@@ -6,6 +6,7 @@
 {% block extra_css %}
     <link rel="stylesheet" href="{% static 'css/register.css' %}">
 {% endblock %}
+{% block section_title %}<h2 class="text-white">Subir Ap<span class="text-gradient">untes</span></h2>{% endblock %}
 {% block content %}
     <div class="container">
         <form method="post" enctype="multipart/form-data" class="glass-style p-4 rounded">
@@ -27,7 +28,7 @@
                 </div>
             {% endif %}
 
-            <h2 class="text-white mb-4 text-center">Subir Ap<span class="text-gradient">untes</span></h2>
+
 
             <p style="font-size: 15px" class="text-white">
                 Puedes subir un archivo PDF o escribir un texto manualmente. Si deseas, EdukAI puede generar

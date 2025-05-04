@@ -62,7 +62,7 @@ def generar_titulo_con_ia(texto):
             )},
             {"role": "user", "content": f"Texto:\n\n{texto}"}
         ],
-        max_tokens=50
+        max_tokens=35
     )
     return respuesta.choices[0].message.content.strip()
 

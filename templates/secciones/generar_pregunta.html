@@ -2,10 +2,10 @@
 {% load static %}
 
 {% block title %}Generar Preguntas | EdukAI{% endblock %}
-
+{% block section_title %}<h2>Selecciona un apu<span class="text-gradient">nte para generar preguntas</span></h2>{% endblock %}
 {% block content %}
     <div class="container">
-        <h2 class="mb-4">Selecciona un apu<span class="text-gradient">nte para generar preguntas</span></h2>
+
         <p>Si no vez tus apuntes aquí sigue este link para subirlos <a href="{% url 'subir_apunte' %}"
                                                                        class="bt_read_text ">Sube uno aquí.</a></p>
         {% if apuntes %}

@@ -9,11 +9,11 @@
 {% block extra_js %}
     <script src="{% static 'js/perfil.js' %}"></script>
 {% endblock %}
-
+{% block section_title %}  <h3>Mi P<span class="text-gradient">erfil</span></h3>{% endblock %}
 {% block content %}
-    <div class="perfil-container container py-5 px-4 mt-4 mb-5">
+    <div class="perfil-container container py-5 px-4  mb-2">
 
-        <h3 class="mb-4">Mi P<span class="text-gradient">erfil</span></h3>
+
 
         <form method="post" enctype="multipart/form-data">
             {% csrf_token %}

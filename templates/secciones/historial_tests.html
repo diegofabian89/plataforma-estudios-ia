@@ -3,10 +3,10 @@
 {% load mathfilters %}
 
 {% block title %}Historial de Preguntas | EdukAI{% endblock %}
-
+{% block section_title %}<h2 class="text-white "> Histor<span class="text-gradient">ial de Resultados</span></h2>{% endblock %}
 {% block content %}
     <div class="container mb-3">
-        <h2 class="mb-4 text-white "> Histor<span class="text-gradient">ial de Resultados</span></h2>
+
         <div class="card glass-card p-4">
             {% if resultados %}
 
@@ -40,9 +40,9 @@
                             </td>
                             <td>{{ resultado.total_preguntas }}</td>
                             <td>{{ resultado.fecha }}</td>
-                            <td>
+                            <td class="p-2">
                                 <a href="{% url 'test_interactivo' resultado.apunte.id %}"
-                                   class="btn btn-outline-light mt-3 w-100">
+                                   class="btn btn-outline-light mt-3">
                                     Repetir test
                                 </a>
                             </td>

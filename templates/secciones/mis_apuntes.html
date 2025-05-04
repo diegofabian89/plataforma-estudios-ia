@@ -2,11 +2,11 @@
 {% load static %}
 
 {% block title %}Mis Apuntes | EdukAI{% endblock %}
-
+{% block section_title %}<h3 class="text-white">Mis A<span class="text-gradient">puntes</span></h3>{% endblock %}
 {% block content %}
     <div class="container">
 
-        <h3 class="text-white mb-4 text-center">Mis A<span class="text-gradient">puntes</span></h3>
+
         {% if messages %}
             {% for message in messages %}
                 <div class="alert alert-{{ message.tags }} alert-dismissible fade show" role="alert">
@@ -17,37 +17,38 @@
         {% endif %}
         {% if apuntes %}
             <div class="row g-4">
-            {% for apunte in apuntes %}
-                <div class="col-md-6 col-lg-4 b">
-                <div class="card glass-card p-4 h-100">
+                {% for apunte in apuntes %}
+                    <div class="col-md-6 col-lg-4 b">
+                        <div class="card glass-card p-4 h-100">
 
-                    <div class="d-flex justify-content-between align-items-center">
-                        <h5 class="text-white">{{ apunte.titulo|truncatechars:30 }}</h5>
-                        <div>
-                            <a href="{% url 'detalle_resumen' apunte.id %}" class="btn btn-outline-light ">Ver
-                                Resumen </a>
+                            <div class="d-flex justify-content-between align-items-center">
+                                <h5 class="text-white">{{ apunte.titulo|truncatechars:30 }}</h5>
+                                <div>
+                                    <a href="{% url 'detalle_resumen' apunte.id %}" class="btn btn-outline-light ">Ver
+                                        Resumen </a>
+                                </div>
+                            </div>
+
+                            <div class="d-flex justify-content-between align-items-center">
+                                <small class="text-muted">{{ apunte.categoria.nombre }}</small>
+                                <a href="{% url 'generar_preguntas' apunte.id %}"
+                                   class="btn btn-outline-light mt-3">Generar preguntas</a>
+                            </div>
+                            <div class="glass-box mt-3 h-100">
+                                <p class="text-light small">{{ apunte.texto|truncatechars:200 }}</p>
+                            </div>
+                            <a href="{% url 'detalle_apuntes' apunte.id %}" class="btn btn-outline-light mt-3  w-100">Ver
+                                completo</a>
+
                         </div>
                     </div>
-
-                    <div class="d-flex justify-content-between align-items-center">
-                        <small class="text-muted">{{ apunte.categoria.nombre }}</small>
-                        <a href="#" class="btn btn-outline-light mt-2 ">Generar tests </a>
-                    </div>
-                        <div class="glass-box mt-3 h-100">
-                            <p class="text-light small">{{ apunte.texto|truncatechars:200 }}</p>
-                        </div>
-                        <a href="{% url 'detalle_apuntes' apunte.id %}" class="btn btn-outline-light mt-3  w-100">Ver
-                            completo</a>
-
-                    </div>
-                </div>
-            {% endfor %}
-        </div>
+                {% endfor %}
+            </div>
         {% else %}
             <div class="alert alert-warning mt-4">
                 No has subido ningún apunte todavía.
             </div>
         {% endif %}
-        </div>
+    </div>
 
 {% endblock %}

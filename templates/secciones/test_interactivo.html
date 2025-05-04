@@ -1,19 +1,21 @@
 {% extends "base.html" %}
 {% load static %}
+{% load widget_tweaks %}
 {% load mathfilters %}
 
 {% block title %}Test Interactivo | EdukAI{% endblock %}
+{% block section_title %} <h2 class="text-white">Test Interac<span class="text-gradient">tivo :
+    {% if apunte.titulo %}
+        {{ apunte.titulo }}
+        </span></h2>
 
+    {% endif %}{% endblock %}
 {% block content %}
     <div class="container py-5">
         <div class="mb-4">
-            <h2 class="mb-6 text-white">Test Interac<span class="text-gradient">tivo:
-                {% if apunte.titulo %}
-                    {{ apunte.titulo }}
-
-                    </span></h2>
-                    <p class="text-muted">{{ apunte.categoria }}</p>
-                {% endif %}
+            {% if apunte.categoria %}
+                <p class="text-muted">{{ apunte.categoria }}</p>
+            {% endif %}
         </div>
         <div id="test-container" class="text-white mt-4">
             <!-- Aquí se cargará la pregunta vía JS -->

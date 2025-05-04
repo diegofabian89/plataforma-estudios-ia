@@ -18,8 +18,9 @@
 
 <div class="nav flex-column sidebar v-100">
 
-    <h2 class="logo mb-4 p-2">Eduk<span class="text-gradient">AI</span></h2>
-    <ul class="nav flex-column mt-4">
+
+    <ul class="nav flex-column">
+        <li class="nav-item"><h2 class="logo  p-2">Eduk<span class="text-gradient">AI</span></h2></li>
         <li class="nav-item"><a href="{% url 'dashboard' %}"
                                 class="nav-link {% if active == 'dashboard' %}bg-gradient text-white{% else %}text-white{% endif %}"><i
                 class="fa-solid fa-house"></i> Inicio</a></li>
@@ -64,10 +65,14 @@
 
 <div class="content flex-grow-1 p-4">
     <div class="d-flex justify-content-between align-items-center mb-1">
+
+            {% block section_title %}{% endblock %}
+
         <div class="flex-grow-1"></div>
 
         <div class="d-flex align-items-center gap-3">
             {% if user.is_authenticated %}
+
                 <div class="text-end">
                     <small class="text-light d-block">{{ user.username|capfirst }}</small>
                     <small class="text-light d-block">
@@ -88,8 +93,10 @@
             {% endif %}
         </div>
     </div>
-    {% block content %}
-    {% endblock %}
+    <main id="main-content" class="flex-grow-1">
+        {% block content %}{% endblock %}
+    </main>
+
 </div>
 
 </body>

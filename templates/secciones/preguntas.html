@@ -18,9 +18,9 @@
                                 <p class="text-muted">{{ apunte.ultima_pregunta }}</p>
                             </div>
                             <a href="{% url 'test_interactivo' apunte.id %}" class="btn btn-outline-light mt-3 w-100">Empezar
-                                Test</a>
-                            <a href="{% url 'exportar_test_pdf' apunte.id %}" class="btn btn-outline-light mt-3 w-100">
-                                Descargar en PDF
+                                Test Interactivo</a>
+                            <a href="{% url 'ver_test' apunte.id %}" class="btn btn-outline-light mt-3 w-100">
+                                Ver test
                             </a>
 
                         </div>

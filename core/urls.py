@@ -43,7 +43,7 @@ urlpatterns = [
     path('perfil/', views.perfil_view, name='perfil'),
     path('reenviar-activacion/', views.reenviar_activacion_view, name='reenviar_activacion'),
 
-    path('subir-apunte/', subir_apunte_view, name='subir_apunte'),
+    path('subir-apunte/', views.subir_apunte_view, name='subir_apunte'),
     path('resumenes/', views.resumenes_view, name='resumenes'),
     path('resumenes/<int:apunte_id>/', views.detalle_resumen_view, name='detalle_resumen'),
     path('mis-apuntes/', views.mis_apuntes_view, name='mis_apuntes'),
@@ -57,5 +57,6 @@ urlpatterns = [
     path('guardar-resultado/', views.guardar_resultado_test, name='guardar_resultado_test'),
     path('guardar-resultado/', views.guardar_resultado_test, name='guardar_resultado_test'),
     path('descargar/test/<int:apunte_id>/', views.exportar_test_pdf, name='exportar_test_pdf'),
+    path('ver-test/<int:apunte_id>/', views.ver_test_view, name='ver_test'),
 
 ]

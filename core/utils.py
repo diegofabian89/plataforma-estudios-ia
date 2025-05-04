@@ -21,10 +21,18 @@ def resumir_texto_con_ia(texto):
 
 def extraer_texto_de_pdf(pdf_file):
     texto = ""
-    pdf_reader = PyPDF2.PdfReader(pdf_file)
-    for page in pdf_reader.pages:
-        texto += page.extract_text() or ""
-    return texto.strip()
+    try:
+        pdf_reader = PyPDF2.PdfReader(pdf_file)
+        for page in pdf_reader.pages:
+            texto += page.extract_text() or ""
+    except PyPDF2.errors.PdfReadError:
+
+        return None
+
+    texto_limpio = texto.strip()
+    if not texto_limpio:
+        return None
+    return texto_limpio
 
 
 def predecir_categoria_con_ia(texto):

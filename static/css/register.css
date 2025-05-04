@@ -160,7 +160,15 @@ select option {
     -webkit-text-fill-color: transparent;
 }
 .alert-warning {
-    background-color: rgba(255, 200, 0, 0.1);
+    background-color: rgb(226, 221, 237);
+    border: 1px solid #ffc107;
+    color: #ffc107;
+    border-radius: 8px;
+    padding: 12px 16px;
+    margin-bottom: 20px;
+}
+.alert-info {
+    background-color: rgb(226, 221, 237);
     border: 1px solid #ffc107;
     color: #ffc107;
     border-radius: 8px;

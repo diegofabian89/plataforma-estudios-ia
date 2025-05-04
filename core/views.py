@@ -8,6 +8,7 @@ from django.views.decorators.http import require_POST
 import json
 
 from reportlab.lib.pagesizes import A4
+from reportlab.lib.utils import simpleSplit
 from reportlab.pdfgen import canvas
 
 from .forms import CustomUserCreationForm, PerfilForm, CustomEmailLoginForm
@@ -281,41 +282,38 @@ def subir_apunte_view(request):
         form = ApunteForm(request.POST, request.FILES)
         if form.is_valid():
             archivo = form.cleaned_data.get('archivo')
+            texto_manual = form.cleaned_data.get('texto')
+            texto_extraido = None
+            if archivo:
+                texto_extraido = extraer_texto_de_pdf(archivo)
 
-            # Extraer texto
-            texto_para_resumir = form.cleaned_data.get('texto') or (extraer_texto_de_pdf(archivo) if archivo else '')
+            texto_para_resumir = texto_manual or texto_extraido
 
             if not texto_para_resumir:
                 form.add_error(None, "No se pudo extraer texto del archivo o el texto manual está vacío.")
-                messages.info(request, "No se pudo extraer texto del archivo o el texto manual está vacío.")
                 return render(request, 'secciones/subir_apunte.html', {'form': form, 'active': 'subir_apunte'})
 
-            # Generar resumen
+            # Generar resumen, categoría, guardar apunte... (el resto de tu lógica)
             resumen_generado = resumir_texto_con_ia(texto_para_resumir)
-
-            # Obtener categoría sugerida
             categoria_nombre = predecir_categoria_con_ia(texto_para_resumir)
-
-            # Buscar o crear categoría
             categoria, _ = Categoria.objects.get_or_create(nombre=categoria_nombre)
-
-            # Guardar apunte
             apunte = form.save(commit=False)
             if not form.cleaned_data.get('titulo'):
                 apunte.titulo = generar_titulo_con_ia(texto_para_resumir)
             else:
                 apunte.titulo = form.cleaned_data.get('titulo')
-
             apunte.usuario = request.user
             apunte.resumen = resumen_generado
             apunte.categoria = categoria
-
             apunte.save()
-            messages.success(request, f"Apunte subido y categorizado automáticamente como: {categoria.nombre}")
-            return redirect('mis_apuntes')
+            messages.success(request,
+                             f"Apunte subido y categorizado automáticamente como: {categoria.nombre} puedes ir a la seccion Mis Apuntes para verlos")
+            return redirect('dashboard')
+        else:
+
+            return render(request, 'secciones/subir_apunte.html', {'form': form, 'active': 'subir_apunte'})
     else:
         form = ApunteForm()
-
     return render(request, 'secciones/subir_apunte.html', {'form': form, 'active': 'subir_apunte'})
 
 
@@ -382,15 +380,9 @@ def generar_preguntas_view(request, apunte_id):
 
     # Llamar a la IA para generar las preguntas
     preguntas_texto = generar_preguntas_con_ia(apunte.texto)
-    print("--- Respuesta de la IA (preguntas_texto) ---")
-    print(preguntas_texto)
-    print("--- Fin de la respuesta de la IA ---")
 
     # Aquí parseamos las preguntas generadas
     preguntas = parsear_preguntas_desde_texto(preguntas_texto)
-    print("--- Preguntas parseadas (lista 'preguntas') ---")
-    print(preguntas)
-    print("--- Fin de las preguntas parseadas ---")
 
     # Guardar las preguntas en la base de datos
     for p in preguntas:
@@ -405,9 +397,10 @@ def generar_preguntas_view(request, apunte_id):
             respuesta_correcta=p['respuesta_correcta']
         )
 
-    messages.success(request, f"Se han generado {len(preguntas)} preguntas para el apunte \"{apunte.titulo}\".")
+    messages.success(request,
+                     f"Se han generado {len(preguntas)} preguntas para el apunte \"{apunte.titulo}\". Ve a la seccion Mis Preguntas para verlas")
 
-    return redirect('preguntas')
+    return redirect('dashboard')
 
 
 def parsear_preguntas_desde_texto(texto):
@@ -516,26 +509,61 @@ def exportar_test_pdf(request, apunte_id):
     p.setFont("Helvetica", 12)
     p.drawString(50, y, f"{apunte.titulo}")
     y -= 30
-
+    respuestas_finales = []
     for idx, pregunta in enumerate(preguntas, start=1):
-        if y < 120:  # Salto de página si es necesario
+        if y < 150:
             p.showPage()
             y = height - 50
 
-        p.drawString(50, y, f"{idx}. {pregunta.pregunta}")
-        y -= 20
-        p.drawString(70, y, f"A) {pregunta.opcion_1}")
-        y -= 20
-        p.drawString(70, y, f"B) {pregunta.opcion_2}")
-        y -= 20
-        p.drawString(70, y, f"C) {pregunta.opcion_3}")
-        y -= 20
-        p.drawString(70, y, f"D) {pregunta.opcion_4}")
-        y -= 20
-        p.setFillColorRGB(0.2, 0.8, 0.2)
-        p.drawString(70, y, f"Respuesta correcta: {pregunta.respuesta_correcta}")
-        p.setFillColorRGB(0, 0, 0)  # Volver al color blanco
-        y -= 30
+        # Mostrar pregunta con salto de línea
+        texto_pregunta = f"{idx}. {pregunta.pregunta}"
+        lineas = simpleSplit(texto_pregunta, "Helvetica", 12, width - 100)
+        for linea in lineas:
+            p.drawString(50, y, linea)
+            y -= 20
 
+        # Mostrar opciones
+        opciones = [
+            f"A) {pregunta.opcion_1}",
+            f"B) {pregunta.opcion_2}",
+            f"C) {pregunta.opcion_3}",
+            f"D) {pregunta.opcion_4}",
+        ]
+        for opcion in opciones:
+            lineas_opcion = simpleSplit(opcion, "Helvetica", 12, width - 100)
+            for linea in lineas_opcion:
+                if y < 50:
+                    p.showPage()
+                    y = height - 50
+                p.drawString(70, y, linea)
+                y -= 20
+
+        # Respuesta correcta
+        y -= 20
+        respuestas_finales.append(f"{idx}. {pregunta.pregunta}: \n {pregunta.respuesta_correcta}")
+
+    p.showPage()
+    y = height - 50
+    p.setFont("Helvetica-Bold", 14)
+    p.drawString(50, y, " Respuestas Correctas")
+    y -= 30
+    p.setFont("Helvetica", 12)
+
+    for respuesta in respuestas_finales:
+
+        lineas_opcion = simpleSplit(respuesta, "Helvetica", 12, width - 100)
+        for linea in lineas_opcion:
+            if y < 50:
+                p.showPage()
+                y = height - 50
+            p.drawString(70, y, linea)
+            y -= 20
+        y -= 20
     p.save()
     return response
+@never_cache
+@login_required
+def ver_test_view(request, apunte_id):
+    apunte = get_object_or_404(Apunte, id=apunte_id, usuario=request.user)
+    preguntas = Pregunta.objects.filter(apunte=apunte, usuario=request.user)
+    return render(request, 'secciones/detalle_test.html', {'apunte': apunte, 'preguntas': preguntas})

@@ -35,6 +35,17 @@ label {
     font-weight: 500;
     margin-bottom: 4px;
 }
+a {
+    font-size: 0.85rem;
+    color: #bbb;
+    text-decoration: none;
+    transition: color 0.2s ease-in-out;
+}
+
+a:hover {
+    color: #fff;
+    text-decoration: underline;
+}
 
 /* Inputs y selects generales */
 input,

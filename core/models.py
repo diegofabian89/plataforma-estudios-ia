@@ -78,7 +78,6 @@ class Pregunta(models.Model):
     respuesta_correcta = models.CharField(max_length=255)  # Guarda el texto de la respuesta correcta
     creada = models.DateTimeField(auto_now_add=True)
 
-
     def __str__(self):
         return f"Pregunta de {self.apunte.titulo[:40]}..."
 
@@ -95,5 +94,3 @@ class ResultadoTest(models.Model):
 
     def __str__(self):
         return f"{self.usuario.username} - {self.apunte.titulo} ({self.puntuacion}/{self.total_preguntas})"
-
-

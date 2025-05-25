@@ -1,5 +1,4 @@
 from pathlib import Path
-from django.contrib.auth.decorators import login_required
 from django.contrib.auth.views import LoginView, PasswordResetView, PasswordResetConfirmView
 from django.db.models import Max
 from django.http import JsonResponse, HttpResponse
@@ -23,8 +22,6 @@ from django.utils.http import urlsafe_base64_encode
 from django.utils.encoding import force_bytes
 from django.core.mail import EmailMessage, EmailMultiAlternatives, send_mail
 from django.utils.http import urlsafe_base64_decode
-from django.contrib.auth import get_user_model
-from django.shortcuts import redirect
 from django.contrib.auth.tokens import default_token_generator
 from django.contrib import messages
 from .models import PerfilUsuario, Apunte, Categoria, Pregunta, ResultadoTest
@@ -189,6 +186,8 @@ def register_view(request):
         form = CustomUserCreationForm()
     return render(request, 'register.html', {'form': form})
 
+def terminos_view(request):
+    return render(request, 'secciones/terminos.html')
 
 def custom_logout_view(request):
     logout(request)
@@ -350,10 +349,11 @@ def detalle_apuntes_view(request, apunte_id):
 @login_required
 def eliminar_apunte_view(request, apunte_id):
     apunte = get_object_or_404(Apunte, id=apunte_id, usuario=request.user)
+    pregunta = get_object_or_404(Pregunta, id=apunte_id)
 
     if request.method == 'POST':
-        apunte.delete()  # Esto elimina también el resumen si está en el mismo modelo
-        messages.success(request, "Apunte y resumen eliminados correctamente.")
+        apunte.delete()
+        messages.success(request, "Apunte, resumen preguntas y resultado eliminados correctamente.")
         return redirect('mis_apuntes')
 
     return redirect('detalle_apunte', apunte_id=apunte_id)
@@ -561,6 +561,8 @@ def exportar_test_pdf(request, apunte_id):
         y -= 20
     p.save()
     return response
+
+
 @never_cache
 @login_required
 def ver_test_view(request, apunte_id):

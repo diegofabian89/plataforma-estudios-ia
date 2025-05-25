@@ -15,7 +15,7 @@
 <div class="register-container">
 
     <div class="text-center mb-2">
-        <img id="logo-edu" src="{% static 'img/logo_frontal.png' %}" width="150" alt="Logo EdukAI">
+        <img id="logo-edu" src="{% static 'img/logo_frontal.png' %}" height="100" width="100" alt="Logo EdukAI">
     </div>
 
     <h2>Crear cuenta</h2>
@@ -64,7 +64,7 @@
                 <div class="text-danger mt-1">{{ form.password1.errors.0 }}</div>
             {% endif %}
         </div>
-            <div class="mb-3">
+        <div class="mb-3">
             {{ form.password2.label_tag }}
             <div class="input-group">
                 {{ form.password2|add_class:"form-control" }}
@@ -77,7 +77,9 @@
             {% endif %}
         </div>
 
-        <button type="submit" class="btn btn-primary w-100">Registrarse</button>
+        <a href="{% url 'terminos' %}" target="_blank">Leer Términos y Condiciones</a>
+
+        <button type="submit" class="btn btn-primary w-100 mt-2">Registrarse</button>
     </form>
 </div>
 

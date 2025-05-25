@@ -50,5 +50,15 @@
             </div>
         {% endif %}
     </div>
+    <script>
+            setTimeout(() => {
+                const alerts = document.querySelectorAll('.alert:not(.alert-persistente)');
+                alerts.forEach(alert => {
+                    alert.style.transition = 'opacity 0.5s ease-out';
+                    alert.style.opacity = '0';
+                    setTimeout(() => alert.remove(), 500);
+                });
+            }, 3500);
+        </script>
 
 {% endblock %}

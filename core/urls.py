@@ -11,6 +11,7 @@ urlpatterns = [
     path('login/', CustomLoginView.as_view(), name='login'),
     path('', views.welcome_view, name='welcome'),
     path('register/', register_view, name='register'),
+    path('terminos/', views.terminos_view, name='terminos'),
     path('dashboard/', views.dashboard_view, name='dashboard'),
     path('mis-apuntes/', views.mis_apuntes_view, name='mis_apuntes'),
     path('resumenes/', views.resumenes_view, name='resumenes'),

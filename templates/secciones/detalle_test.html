@@ -5,10 +5,6 @@
     {{ apunte.titulo }}{% else %}{{ titulo }}{% endif %}</span></h3>{% endblock %}
 {% block content %}
     <div class="container text-light mt-4">
-        <div id="mensaje-toast" class="alert alert-success position-fixed bottom-0 end-0 m-4 d-none"
-             style="z-index: 9999;">
-            Test descargado correctamente.
-        </div>
 
         {% if user.is_authenticated %}
             <a href="{% url 'exportar_test_pdf' apunte.id %}" class="bt_read_text mb-4 mt-3 " style="float: right"
@@ -52,14 +48,4 @@
     <a href="{% url 'subir_apunte_invitado_test' %}" class="btn btn-secondary mt-4">Generar otro test</a>
     {% endif %}
 
-    <script>
-        function mostrarMensaje() {
-            const toast = document.getElementById('mensaje-toast');
-            toast.classList.remove('d-none');
-
-            setTimeout(() => {
-                toast.classList.add('d-none');
-            }, 3000);
-        }
-    </script>
 {% endblock %}

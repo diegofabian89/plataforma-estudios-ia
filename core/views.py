@@ -30,7 +30,7 @@ from django.contrib.auth import get_user_model
 from django.shortcuts import render, redirect
 from .forms import ApunteForm
 from .utils import resumir_texto_con_ia, extraer_texto_de_pdf, predecir_categoria_con_ia, generar_titulo_con_ia, \
-    generar_preguntas_con_ia
+    generar_preguntas_con_ia, generar_consejo_diario_con_cache
 from django.contrib.auth.decorators import login_required
 
 User = get_user_model()
@@ -186,8 +186,10 @@ def register_view(request):
         form = CustomUserCreationForm()
     return render(request, 'register.html', {'form': form})
 
+
 def terminos_view(request):
     return render(request, 'secciones/terminos.html')
+
 
 def custom_logout_view(request):
     logout(request)
@@ -202,7 +204,13 @@ def welcome_view(request):
 def dashboard_view(request):
     if request.user.is_authenticated:
         apuntes = Apunte.objects.filter(usuario=request.user).order_by('-creado')
-        return render(request, 'dashboard.html', {'apuntes': apuntes, 'active': 'dashboard'})
+        userId = request.user.id
+        user_name = User.objects.get(id=userId).get_username()
+        estudio_actual = PerfilUsuario.objects.get(user_id=userId).estudio_actual
+
+        consejo = generar_consejo_diario_con_cache(userId, estudio_actual,user_name)
+
+        return render(request, 'dashboard.html', {'apuntes': apuntes, 'consejo': consejo, 'active': 'dashboard'})
     else:
         return render(request, 'dashboard.html', {'active': 'dashboard'})
 

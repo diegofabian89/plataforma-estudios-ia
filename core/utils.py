@@ -1,4 +1,7 @@
+import datetime
+
 import PyPDF2
+from django.core.cache import cache
 
 from openai import OpenAI
 
@@ -83,3 +86,31 @@ def generar_preguntas_con_ia(texto):
         max_tokens=2500
     )
     return respuesta.choices[0].message.content.strip()
+
+
+def generar_consejo_diario_con_cache(user_id, estudio_actual,user_name):
+    hoy = datetime.date.today()
+    cache_key = f"consejo_ia_{user_id}_{hoy.isoformat()}"
+
+
+
+    # Generar nuevo consejo
+    prompt = (f"Dame un consejo breve  para estudiantes de {estudio_actual} con nombre {user_name}. Solo dos párrafos. Fecha: "
+              f"{hoy.strftime('%d/%m/%Y')}. No uses saludos ni introducciones, "
+              f"solo da directamente el consejo empezando con el nombre del estudiante solo el primer nombre.")
+
+    response = client.chat.completions.create(
+        model="gpt-3.5-turbo",
+        messages=[
+            {"role": "system", "content": "Eres un asistente educativo que da consejos útiles."},
+            {"role": "user", "content": prompt}
+        ],
+        max_tokens=150,
+        temperature=0.8
+    )
+
+    consejo_generado = response.choices[0].message.content.strip()
+
+    cache.set(cache_key, consejo_generado, 60 * 60 * 24)
+
+    return consejo_generado

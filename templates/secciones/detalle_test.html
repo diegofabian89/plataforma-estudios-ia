@@ -1,9 +1,8 @@
 {% extends 'base.html' %}
 
 {% block title %}Ver Test - EdukAI{% endblock %}
-{% block section_title %}<h3>Test del apu<span class="text-gradient">nte: "{{ apunte.titulo }} "</span> </h3>
-
-    <h5 class="text"> : Soluciones al final del test.</h5>{% endblock %}
+{% block section_title %}<h3>Test del apu<span class="text-gradient">nte: {% if user.is_authenticated %}
+    {{ apunte.titulo }}{% else %}{{ titulo }}{% endif %}</span></h3>{% endblock %}
 {% block content %}
     <div class="container text-light mt-4">
         <div id="mensaje-toast" class="alert alert-success position-fixed bottom-0 end-0 m-4 d-none"
@@ -11,10 +10,15 @@
             Test descargado correctamente.
         </div>
 
-
-        <a href="{% url 'exportar_test_pdf' apunte.id %}" class="bt_read_text mb-4 mt-3 " style="float: right"
-           onclick="mostrarMensaje()"> Descargar en PDF
-        </a>
+        {% if user.is_authenticated %}
+            <a href="{% url 'exportar_test_pdf' apunte.id %}" class="bt_read_text mb-4 mt-3 " style="float: right"
+               onclick="mostrarMensaje()"> Descargar en PDF
+            </a>
+        {% else %}
+            <a href="{% url 'exportar_test_pdf_invitado' %}" class="bt_read_text mb-4 mt-3 " style="float: right"
+               onclick="mostrarMensaje()"> Descargar en PDF
+            </a>
+        {% endif %}
 
         <br>
         <hr>
@@ -43,6 +47,10 @@
             <p>No hay preguntas para este apunte.</p>
         {% endfor %}
     </div>
+
+    {% if not user.is_authenticated %}
+    <a href="{% url 'subir_apunte_invitado_test' %}" class="btn btn-secondary mt-4">Generar otro test</a>
+    {% endif %}
 
     <script>
         function mostrarMensaje() {

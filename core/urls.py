@@ -45,8 +45,13 @@ urlpatterns = [
     path('reenviar-activacion/', views.reenviar_activacion_view, name='reenviar_activacion'),
 
     path('subir-apunte/', views.subir_apunte_view, name='subir_apunte'),
+    path('subir-apunte-invitado/', views.generar_resumen_invitado_view, name='subir_apunte_invitado'),
+    path('subir-pregunta-invitado/', views.generar_preguntas_invitado_view, name='subir_apunte_invitado_test'),
+
     path('resumenes/', views.resumenes_view, name='resumenes'),
     path('resumenes/<int:apunte_id>/', views.detalle_resumen_view, name='detalle_resumen'),
+    path('invitado/resumen/', views.detalle_resumen_invitado_view, name='detalle_resumen_invitado'),
+
     path('mis-apuntes/', views.mis_apuntes_view, name='mis_apuntes'),
     path('mis-apuntes/<int:apunte_id>/', views.detalle_apuntes_view, name='detalle_apuntes'),
     path('mis-apuntes/<int:apunte_id>/eliminar/', views.eliminar_apunte_view, name='eliminar_apunte'),
@@ -55,9 +60,11 @@ urlpatterns = [
     path('guardar-resultado/', views.guardar_resultado_test, name='guardar_resultado_test'),
     path('test-interactivo/<int:apunte_id>/', views.test_interactivo_view, name='test_interactivo'),
 
-    path('guardar-resultado/', views.guardar_resultado_test, name='guardar_resultado_test'),
-    path('guardar-resultado/', views.guardar_resultado_test, name='guardar_resultado_test'),
     path('descargar/test/<int:apunte_id>/', views.exportar_test_pdf, name='exportar_test_pdf'),
+    path('descargar/test/invitado/', views.exportar_test_pdf, name='exportar_test_pdf_invitado'),
+
     path('ver-test/<int:apunte_id>/', views.ver_test_view, name='ver_test'),
+
+    path('ver-test-invitado', views.detalle_preguntas_invitado_view, name='detalle_preguntas_invitado'),
 
 ]

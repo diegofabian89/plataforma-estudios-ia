@@ -34,7 +34,7 @@
                                 <a href="{% url 'generar_preguntas' apunte.id %}"
                                    class="btn btn-outline-light mt-3">Generar preguntas</a>
                             </div>
-                            <div class="glass-box mt-3 h-100">
+                            <div class="glass-box mt-3">
                                 <p class="text-light small">{{ apunte.texto|truncatechars:200 }}</p>
                             </div>
                             <a href="{% url 'detalle_apuntes' apunte.id %}" class="btn btn-outline-light mt-3  w-100">Ver

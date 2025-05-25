@@ -28,7 +28,7 @@
                 <!-- Bienvenida con logo -->
                 <div class="welcome-card card-glass p-4 mb-4" style="min-width: 320px;">
                     <img src="{% static 'img/logo_frontal.png' %}" alt="Logo EdukAI" width="100" class="mb-3">
-                    <h4>Bienvenido a Eduk<span class="text-gradient"></span>AI,<br>{{ user.username|capfirst }}</h4>
+                    <h4>Bienvenid@ a Eduk<span class="text-gradient"></span>AI,<br>{{ user.username|capfirst }}</h4>
                 </div>
 
                 <!-- Contenido generado por IA -->
@@ -44,30 +44,41 @@
         </div>
 
 
-        <div class="row g-4">
+        <div class="row g-4 justify-content-center">
             <div class="col-md-6 col-lg-4">
-                <a href="{% url 'subir_apunte' %}" class="text-decoration-none">
-                    <div class="bt_dashboard_menu text-white text-center p-4 h-100">
-                        <i class="fa-solid fa-upload fa-2x mb-3"></i>
-                        <h5>Subir Apuntes</h5>
-                    </div>
+                {% if user.is_authenticated %}
+                    <a href="{% url 'subir_apunte' %}" class="text-decoration-none">
+                {% else %}
+                    <a href="{% url 'subir_apunte_invitado' %}" class="text-decoration-none">
+                {% endif %}
+
+                <div class="bt_dashboard_menu text-white text-center p-4 h-100">
+                    <i class="fa-solid fa-upload fa-2x mb-3"></i>
+                    <h5>Subir Apuntes</h5>
+                </div>
                 </a>
             </div>
-            <div class="col-md-6 col-lg-4">
-                <a href="{% url 'resumenes' %}" class="text-decoration-none">
-                    <div class="bt_dashboard_menu text-white text-center p-4 h-100">
-                        <i class="fa-solid fa-file-lines fa-2x mb-3"></i>
-                        <h5>Ver Resúmenes</h5>
-                    </div>
-                </a>
-            </div>
+            {% if user.is_authenticated %}
+                <div class="col-md-6 col-lg-4">
+                    <a href="{% url 'resumenes' %}" class="text-decoration-none">
+                        <div class="bt_dashboard_menu text-white text-center p-4 h-100">
+                            <i class="fa-solid fa-file-lines fa-2x mb-3"></i>
+                            <h5>Ver Resúmenes</h5>
+                        </div>
+                    </a>
+                </div>
+            {% endif %}
 
             <div class="col-md-6 col-lg-4">
-                <a href="{% url 'seleccionar_apunte' %}" class="text-decoration-none">
-                    <div class="bt_dashboard_menu text-white text-center p-4 h-100">
-                        <i class="fa-solid fa-pen-nib fa-2x mb-3"></i>
-                        <h5>Generar Preguntas</h5>
-                    </div>
+                {% if user.is_authenticated %}
+                    <a href="{% url 'seleccionar_apunte' %}" class="text-decoration-none">
+                {% else %}
+                    <a href="{% url 'subir_apunte_invitado_test' %}" class="text-decoration-none">
+                {% endif %}
+                <div class="bt_dashboard_menu text-white text-center p-4 h-100">
+                    <i class="fa-solid fa-pen-nib fa-2x mb-3"></i>
+                    <h5>Generar Preguntas</h5>
+                </div>
                 </a>
             </div>
 

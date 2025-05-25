@@ -65,7 +65,7 @@ def generar_titulo_con_ia(texto):
             )},
             {"role": "user", "content": f"Texto:\n\n{texto}"}
         ],
-        max_tokens=35
+        max_tokens=30
     )
     return respuesta.choices[0].message.content.strip()
 
@@ -91,8 +91,10 @@ def generar_preguntas_con_ia(texto):
 def generar_consejo_diario_con_cache(user_id, estudio_actual,user_name):
     hoy = datetime.date.today()
     cache_key = f"consejo_ia_{user_id}_{hoy.isoformat()}"
+    consejo = cache.get(cache_key)
 
-
+    if consejo:
+        return consejo
 
     # Generar nuevo consejo
     prompt = (f"Dame un consejo breve  para estudiantes de {estudio_actual} con nombre {user_name}. Solo dos párrafos. Fecha: "

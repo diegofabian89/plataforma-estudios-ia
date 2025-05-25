@@ -255,5 +255,10 @@ textarea.form-control:focus {
     color: #ccc;
 }
 
-
+.scroll-box {
+    overflow-x: auto;
+    word-wrap: break-word;
+    overflow-wrap: break-word;
+    white-space: normal;
+}
 

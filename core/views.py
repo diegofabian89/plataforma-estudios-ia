@@ -208,11 +208,115 @@ def dashboard_view(request):
         user_name = User.objects.get(id=userId).get_username()
         estudio_actual = PerfilUsuario.objects.get(user_id=userId).estudio_actual
 
-        consejo = generar_consejo_diario_con_cache(userId, estudio_actual,user_name)
+        consejo = generar_consejo_diario_con_cache(userId, estudio_actual, user_name)
 
         return render(request, 'dashboard.html', {'apuntes': apuntes, 'consejo': consejo, 'active': 'dashboard'})
     else:
-        return render(request, 'dashboard.html', {'active': 'dashboard'})
+        consejo = generar_consejo_diario_con_cache(1, 'Formacion', 'Invitad@')
+        return render(request, 'dashboard.html', {'consejo': consejo, 'active': 'dashboard'})
+
+
+def generar_resumen_invitado_view(request):
+    if request.method == 'POST':
+        form = ApunteForm(request.POST, request.FILES)
+        if form.is_valid():
+            archivo = form.cleaned_data.get('archivo')
+            texto_manual = form.cleaned_data.get('texto')
+            titulo_manual = form.cleaned_data.get('titulo')
+            categoria_manual = form.cleaned_data.get('categoria')
+
+            texto_extraido = extraer_texto_de_pdf(archivo) if archivo else ""
+            texto_entrada = texto_manual or texto_extraido
+
+            if not texto_entrada.strip():
+                form.add_error(None, "Debes subir un archivo válido o introducir texto.")
+            else:
+                resumen = resumir_texto_con_ia(texto_entrada)
+
+                titulo = titulo_manual or generar_titulo_con_ia(texto_entrada)
+
+                categoria = categoria_manual.nombre if categoria_manual else predecir_categoria_con_ia(texto_entrada)
+
+                request.session['resumen_invitado'] = resumen
+                request.session['titulo_invitado'] = titulo
+                request.session['categoria_invitado'] = categoria
+                return redirect('detalle_resumen_invitado')
+    else:
+        form = ApunteForm()
+
+    return render(request, 'secciones/subir_apunte.html', {
+        'form': form
+    })
+
+
+def detalle_resumen_invitado_view(request):
+    resumen = request.session.get('resumen_invitado')
+    titulo = request.session.get('titulo_invitado')
+    categoria = request.session.get('categoria_invitado')
+
+    if not resumen or not titulo:
+        return redirect('subir_apunte_invitado')
+
+    return render(request, 'secciones/detalle_resumen.html', {
+        'resumen': resumen,
+        'titulo': titulo,
+        'categoria': categoria
+    })
+
+
+def generar_preguntas_invitado_view(request):
+    if request.method == 'POST':
+        form = ApunteForm(request.POST, request.FILES)
+        if form.is_valid():
+            archivo = form.cleaned_data.get('archivo')
+            texto_manual = form.cleaned_data.get('texto')
+            titulo_manual = form.cleaned_data.get('titulo')
+
+            texto_extraido = extraer_texto_de_pdf(archivo) if archivo else ""
+            texto_entrada = texto_manual or texto_extraido
+
+            if not texto_entrada.strip():
+                form.add_error(None, "Debes subir un archivo válido o escribir texto.")
+            else:
+                preguntas_texto = generar_preguntas_con_ia(texto_entrada)
+                preguntas_generadas = parsear_preguntas_desde_texto(preguntas_texto)
+
+                titulo = titulo_manual or generar_titulo_con_ia(texto_entrada)
+
+                preguntas_formateadas = []
+                for p in preguntas_generadas:
+                    preguntas_formateadas.append({
+                        'pregunta': p['pregunta'],
+                        'opcion_1': p['opciones'][0],
+                        'opcion_2': p['opciones'][1],
+                        'opcion_3': p['opciones'][2],
+                        'opcion_4': p['opciones'][3],
+                        'respuesta_correcta': p['respuesta_correcta']
+                    })
+
+                request.session['preguntas_invitado'] = preguntas_formateadas
+                request.session['titulo_invitado'] = titulo
+                return redirect('detalle_preguntas_invitado')
+    else:
+        form = ApunteForm()
+
+    return render(request, 'secciones/subir_apunte.html', {
+        'form': form
+    })
+
+
+def detalle_preguntas_invitado_view(request):
+    preguntas = request.session.get('preguntas_invitado')
+    titulo = request.session.get('titulo_invitado')
+
+    if not preguntas or not titulo:
+        return redirect('subir_apunte_invitado')
+
+    return render(request, 'secciones/detalle_test.html', {
+        'preguntas': preguntas,
+        'titulo': titulo,
+        'invitado': True
+    })
 
 
 @never_cache
@@ -498,13 +602,24 @@ def guardar_resultado_test(request):
 
 
 @never_cache
-@login_required
-def exportar_test_pdf(request, apunte_id):
-    apunte = Apunte.objects.get(id=apunte_id, usuario=request.user)
-    preguntas = Pregunta.objects.filter(apunte=apunte, usuario=request.user)
+def exportar_test_pdf(request, apunte_id=None):
+    es_invitado = not request.user.is_authenticated
 
-    response = HttpResponse(content_type='application/pdf')
-    response['Content-Disposition'] = f'attachment; filename="test_{apunte.titulo}.pdf"'
+    if es_invitado:
+        preguntas = request.session.get('preguntas_invitado')
+        titulo = request.session.get('titulo_invitado')
+        response = HttpResponse(content_type='application/pdf')
+        response['Content-Disposition'] = f'attachment; filename="test_{titulo}.pdf"'
+
+
+
+    else:
+        apunte = Apunte.objects.get(id=apunte_id, usuario=request.user)
+        preguntas = Pregunta.objects.filter(apunte=apunte, usuario=request.user)
+        titulo = apunte.titulo
+
+        response = HttpResponse(content_type='application/pdf')
+        response['Content-Disposition'] = f'attachment; filename="test_{titulo}.pdf"'
 
     p = canvas.Canvas(response, pagesize=A4)
     width, height = A4
@@ -515,7 +630,11 @@ def exportar_test_pdf(request, apunte_id):
     y -= 30
 
     p.setFont("Helvetica", 12)
-    p.drawString(50, y, f"{apunte.titulo}")
+    lineas_titulo = simpleSplit(titulo, "Helvetica", 12, width - 100)
+    for linea in lineas_titulo:
+        p.drawString(50, y, linea)
+        y -= 20
+
     y -= 30
     respuestas_finales = []
     for idx, pregunta in enumerate(preguntas, start=1):
@@ -524,19 +643,29 @@ def exportar_test_pdf(request, apunte_id):
             y = height - 50
 
         # Mostrar pregunta con salto de línea
-        texto_pregunta = f"{idx}. {pregunta.pregunta}"
+        texto_pregunta = f"{idx}. {pregunta['pregunta']}" if es_invitado else f"{idx}. {pregunta.pregunta}"
         lineas = simpleSplit(texto_pregunta, "Helvetica", 12, width - 100)
         for linea in lineas:
             p.drawString(50, y, linea)
             y -= 20
 
         # Mostrar opciones
-        opciones = [
-            f"A) {pregunta.opcion_1}",
-            f"B) {pregunta.opcion_2}",
-            f"C) {pregunta.opcion_3}",
-            f"D) {pregunta.opcion_4}",
-        ]
+        if es_invitado:
+            opciones = [
+                f"A) {pregunta['opcion_1']}",
+                f"B) {pregunta['opcion_2']}",
+                f"C) {pregunta['opcion_3']}",
+                f"D) {pregunta['opcion_4']}",
+            ]
+            respuesta = pregunta['respuesta_correcta']
+        else:
+            opciones = [
+                f"A) {pregunta.opcion_1}",
+                f"B) {pregunta.opcion_2}",
+                f"C) {pregunta.opcion_3}",
+                f"D) {pregunta.opcion_4}",
+            ]
+            respuesta = pregunta.respuesta_correcta
         for opcion in opciones:
             lineas_opcion = simpleSplit(opcion, "Helvetica", 12, width - 100)
             for linea in lineas_opcion:
@@ -548,7 +677,8 @@ def exportar_test_pdf(request, apunte_id):
 
         # Respuesta correcta
         y -= 20
-        respuestas_finales.append(f"{idx}. {pregunta.pregunta}: \n {pregunta.respuesta_correcta}")
+        texto_pregunta = pregunta['pregunta'] if es_invitado else pregunta.pregunta
+        respuestas_finales.append(f"{idx}. {texto_pregunta}: \n {respuesta}")
 
     p.showPage()
     y = height - 50

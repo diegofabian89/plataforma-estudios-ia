@@ -1,0 +1,33 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}Detalle de Resumen Invitado| EdukAI{% endblock %}
+{% block section_title %}<h3 class="text-white">Resum<span class="text-gradient">en: {% if user.is_authenticated %}
+    {{ apunte.titulo }}{% else %}{{ titulo }}{% endif %}</span></h3>{% endblock %}
+{% block content %}
+    <div class="container">
+        {% if not user.is_authenticated %}
+            <div class="alert alert-info">
+                Estás viendo un resumen generado como invitado. Recuerda que este contenido no se guarda en tu perfil.
+            </div>
+            <div class="card glass-card p-4">
+                <h6 class="text-light">Categoría: {{ categoria }}</h6>
+                <div class="glass-box-pdf mt-3">
+                    <p class="text-light">{{ resumen }}</p>
+                </div>
+            </div>
+            <a href="{% url 'subir_apunte_invitado' %}" class="btn btn-outline-light mt-4">Generar otro</a>
+        {% else %}
+
+            <div class="card glass-card p-4">
+                <h6 class="text-light">Categoría: {{ apunte.categoria.nombre }}</h6>
+                <div class="glass-box-pdf mt-3">
+                    <p class="text-light">{{ apunte.resumen|linebreaksbr }}</p>
+                </div>
+                <a href="{% url 'detalle_apuntes' apunte.id %}" class="bt_read_text  mt-4">Leer PDF original</a>
+            </div>
+
+            <a href="{% url 'resumenes' %}" class="btn btn-outline-light mt-4">⬅ Volver a resúmenes</a>
+        {% endif %}
+    </div>
+{% endblock %}

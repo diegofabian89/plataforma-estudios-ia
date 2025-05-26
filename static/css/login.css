@@ -1,0 +1,220 @@
+body {
+    margin: 0;
+    background: linear-gradient(to right, #0f0c29, #302b63, #24243e);
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+
+}
+
+.glass-container {
+    background: rgba(255, 255, 255, 0.1);
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+    border-radius: 20px;
+    box-shadow: 0 4px 30px rgba(0, 0, 0, 0.5);
+    width: 350px;
+}
+/* Estilo general de inputs */
+input[type="text"],
+input[type="password"] {
+    background: rgba(255, 255, 255, 0.1);  /* fondo oscuro/transparente */
+    color: #fff;
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    border-radius: 8px;
+    padding: 10px;
+    font-weight: 300;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    letter-spacing: 0.5px;
+}
+
+/* Estilo al enfocar */
+input[type="text"]:focus,
+input[type="password"]:focus {
+    outline: none;
+    border-color: rgba(255, 255, 255, 0.5);
+    background: rgba(255, 255, 255, 0.15);
+    color: #ede6c2;
+}
+
+/* Ajuste del label si usas etiquetas */
+label {
+    font-weight: 400;
+    font-size: 0.9rem;
+    color: #ddd;
+}
+/* Estilo del botón */
+button[type="submit"] {
+    background: linear-gradient(to right, #290753, #025495);
+    color: white;
+    border: none;
+    padding: 12px;
+    border-radius: 10px;
+    font-weight: 500;
+    font-size: 1rem;
+    width: 100%;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+    transition: all 0.3s ease-in-out;
+    backdrop-filter: blur(2px);
+    letter-spacing: 1px;
+}
+
+button[type="submit"]:hover {
+    background: linear-gradient(to right, #025495, #290753);
+    box-shadow: 0 6px 20px rgba(0, 0, 0, 0.4);
+    transform: scale(1.02);
+}
+.text-gradient {
+    background: linear-gradient(to right, #c5b404, #9037fb);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+}
+.text-danger {
+    color: #ff7373;
+}
+
+.alert-danger {
+    background: rgba(255, 0, 0, 0.1);
+    border: 1px solid #ff7373;
+    color: #ff7373;
+    padding: 10px;
+    border-radius: 6px;
+    margin-bottom: 1rem;
+}
+/* Texto más pequeño y estilizado */
+.small-text {
+    font-size: 0.85rem;
+    color: #ccc;
+}
+.forgot-link {
+    font-size: 0.85rem;
+    color: #bbb;
+    text-decoration: none;
+    transition: color 0.2s ease-in-out;
+}
+
+.forgot-link:hover {
+    color: #fff;
+    text-decoration: underline;
+}
+/* Checkbox personalizado */
+.custom-checkbox {
+    position: relative;
+    padding-left: 25px;
+    cursor: pointer;
+    user-select: none;
+    font-weight: 300;
+}
+
+.custom-checkbox input {
+    position: absolute;
+    opacity: 0;
+    cursor: pointer;
+    height: 0;
+    width: 0;
+}
+
+.custom-checkbox .checkmark {
+    position: absolute;
+    left: 0;
+    top: 2px;
+    height: 16px;
+    width: 16px;
+    background-color: rgba(255, 255, 255, 0.1);
+    border: 1px solid #aaa;
+    border-radius: 4px;
+}
+
+.custom-checkbox input:checked ~ .checkmark {
+    background-color: #7f00ff;
+    border: 1px solid #7f00ff;
+}
+
+.custom-checkbox .checkmark:after {
+    content: "";
+    position: absolute;
+    display: none;
+}
+
+.custom-checkbox input:checked ~ .checkmark:after {
+    display: block;
+}
+
+.custom-checkbox .checkmark:after {
+    left: 5px;
+    top: 1px;
+    width: 4px;
+    height: 8px;
+    border: solid white;
+    border-width: 0 2px 2px 0;
+    transform: rotate(45deg);
+}
+
+.input-group input {
+    border-right: none;
+    border-top-left-radius: 8px;
+    border-bottom-left-radius: 8px;
+}
+
+.input-group .toggle-password {
+    border-top-right-radius: 8px;
+    border-bottom-right-radius: 8px;
+    background: rgba(255, 255, 255, 0.05);
+    color: #ccc;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    transition: all 0.3s ease;
+    font-size: 0.8rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0 14px;
+}
+
+.input-group .toggle-password:hover {
+    background: rgba(255, 255, 255, 0.15);
+    color: #fff;
+}
+.alert {
+    background: rgba(244, 141, 4, 0.41);
+    border: 1px solid rgba(255, 255, 255, 0.15);
+    backdrop-filter: blur(10px);
+    color: #fff;
+    border-radius: 10px;
+    padding: 12px 20px;
+    margin-bottom: 16px;
+    font-size: 0.95rem;
+    box-shadow: 0 4px 18px rgba(0, 0, 0, 0.2);
+}
+
+.alert-info {
+    background: rgba(0, 200, 255, 0.1);
+    border: 1px solid #00bfff;
+    color: #00bfff;
+}
+.alert-warning {
+    background-color: rgba(255, 200, 0, 0.1);
+    border: 1px solid #ffc107;
+    color: #ffc107;
+    border-radius: 8px;
+    padding: 12px 16px;
+    margin-bottom: 20px;
+}
+input.form-control {
+    background: rgba(255, 255, 255, 0.08); /* efecto translúcido */
+    color: #fff;
+    border: 1px solid rgba(255, 255, 255, 0.3);
+    border-radius: 8px;
+    padding: 10px;
+    font-size: 0.9rem;
+    font-weight: 300;
+    transition: background 0.3s ease;
+}
+
+input.form-control::placeholder {
+    color: rgba(255, 255, 255, 0.4); /* placeholder tenue */
+}
+
+input.form-control:focus {
+    background: rgba(255, 255, 255, 0.15);
+    border-color: #fff;
+    outline: none;
+    color: #e5efb6;
+}

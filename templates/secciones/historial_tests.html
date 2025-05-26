@@ -1,0 +1,60 @@
+{% extends "base.html" %}
+{% load static %}
+{% load mathfilters %}
+
+{% block title %}Historial de Preguntas | EdukAI{% endblock %}
+{% block section_title %}
+    <h2 class="text-white "> Histor<span class="text-gradient">ial de Resultados</span></h2>{% endblock %}
+{% block content %}
+    <div class="container mb-3">
+
+        <div class="card glass-card p-4">
+            {% if resultados %}
+                <div class="table-responsive">
+                    <table class="text-light align-middle glass-table ">
+                        <thead class="table-dark">
+                        <tr>
+                            <th> Titulo</th>
+                            <th> Puntuación</th>
+                            <th> Total Preguntas</th>
+                            <th> Fecha</th>
+                            <th> Test</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        {% for resultado in resultados %}
+                            <tr>
+                                <td>{{ resultado.apunte.titulo }}</td>
+                                <td>
+                                    {{ resultado.puntuacion }}
+                                    {% with porcentaje_excelente=resultado.total_preguntas|floatformat:0|mul:"0.8" %}
+                                        {% with porcentaje_aceptable=resultado.total_preguntas|floatformat:0|mul:"0.5" %}
+                                            {% if resultado.puntuacion >= porcentaje_excelente %}
+                                                <span class="badge bg-success ms-2">Excelente</span>
+                                            {% elif resultado.puntuacion >= porcentaje_aceptable %}
+                                                <span class="badge bg-warning text-dark ms-2">Aceptable</span>
+                                            {% else %}
+                                                <span class="badge bg-danger ms-2">Mejorable</span>
+                                            {% endif %}
+                                        {% endwith %}
+                                    {% endwith %}
+                                </td>
+                                <td>{{ resultado.total_preguntas }}</td>
+                                <td>{{ resultado.fecha }}</td>
+                                <td class="p-2">
+                                    <a href="{% url 'test_interactivo' resultado.apunte.id %}"
+                                       class="btn btn-outline-light mt-3">
+                                        Repetir Test
+                                    </a>
+                                </td>
+                            </tr>
+                        {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+                </div>
+            {% else %}
+                <p class="text-muted">No has realizado ningún test todavía.</p>
+            {% endif %}
+    </div>
+{% endblock %}

@@ -1,0 +1,121 @@
+{% extends "base.html" %}
+{% load static %}
+
+
+{% block title %}Inicio | EdukAI{% endblock %}
+
+{% block content %}
+    <div class="container">
+        {% if messages %}
+            {% for message in messages %}
+                <div class="alert alert-success">{{ message }}</div>
+            {% endfor %}
+        {% endif %}
+        {% if not user.is_authenticated %}
+            <div class="alert alert-warning alert-persistente d-flex align-items-center gap-3" role="alert">
+                <i class="fa-solid fa-user-astronaut fa-lg"></i>
+                <div>
+                    <strong>Estás navegando como invitado.</strong><br>
+                    Algunas funcionalidades como guardar apuntes, organizar por categorías o crear preguntas están
+                    desactivadas.
+                    <a href="{% url 'register' %}" class="alert-link text-decoration-underline">Crea una cuenta</a> para
+                    aprovechar al máximo EdukAI.
+                </div>
+            </div>
+        {% endif %}
+        <div class="dashboard-container">
+            <div class="d-flex justify-content-between align-items-start flex-wrap gap-4">
+                <!-- Bienvenida con logo -->
+                <div class="welcome-card card-glass p-4 mb-4" style="min-width: 320px;">
+                    <img src="{% static 'img/logo_frontal.png' %}" alt="Logo EdukAI" width="100" class="mb-3">
+                    <h4>Bienvenid@ a Eduk<span class="text-gradient"></span>AI,<br>{{ user.username|capfirst }}</h4>
+                </div>
+
+                <!-- Contenido generado por IA -->
+                <div class="ai-card card-glass p-4 mb-4 flex-grow-1">
+                    <h5 class="text-light mb-3">Consejo generado por IA</h5>
+                    <div class="glass-box scroll-box">
+                        <p>
+                            {{ consejo }}
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+
+        <div class="row g-4 justify-content-center">
+            <div class="col-md-6 col-lg-4">
+                {% if user.is_authenticated %}
+                    <a href="{% url 'subir_apunte' %}" class="text-decoration-none">
+                {% else %}
+                    <a href="{% url 'subir_apunte_invitado' %}" class="text-decoration-none">
+                {% endif %}
+
+                <div class="bt_dashboard_menu text-white text-center p-4 h-100">
+                    <i class="fa-solid fa-upload fa-2x mb-3"></i>
+                    <h5>Subir Apuntes</h5>
+                </div>
+                </a>
+            </div>
+            {% if user.is_authenticated %}
+                <div class="col-md-6 col-lg-4">
+                    <a href="{% url 'resumenes' %}" class="text-decoration-none">
+                        <div class="bt_dashboard_menu text-white text-center p-4 h-100">
+                            <i class="fa-solid fa-file-lines fa-2x mb-3"></i>
+                            <h5>Ver Resúmenes</h5>
+                        </div>
+                    </a>
+                </div>
+            {% endif %}
+
+            <div class="col-md-6 col-lg-4">
+                {% if user.is_authenticated %}
+                    <a href="{% url 'seleccionar_apunte' %}" class="text-decoration-none">
+                {% else %}
+                    <a href="{% url 'subir_apunte_invitado_test' %}" class="text-decoration-none">
+                {% endif %}
+                <div class="bt_dashboard_menu text-white text-center p-4 h-100">
+                    <i class="fa-solid fa-pen-nib fa-2x mb-3"></i>
+                    <h5>Generar Preguntas</h5>
+                </div>
+                </a>
+            </div>
+
+        </div>
+        <!-- Apuntes recientes -->
+        {% if user.is_authenticated %}
+            <h5 class="text-light mt-4 mb-3">Mis apu<span class="text-gradient">ntes recientes</span></h5>
+            {% if apuntes %}
+                <div class="row g-4">
+                    {% for apunte in apuntes|slice:': 3' %}
+                        <div class="col-md-6 col-lg-4">
+                            <a href="{% url 'detalle_apuntes' apunte.id %}" class="link-custom mt-3  w-100">
+                                <div class="bt_latest_resumes p-3 h-100">
+                                    <h5>{{ apunte.titulo|capfirst }}</h5>
+                                    <small class="text-muted">{{ apunte.categoria.nombre }}</small>
+
+                                </div>
+                            </a>
+                        </div>
+                    {% endfor %}
+                </div>
+            {% else %}
+                <div class="alert alert-warning mt-4">
+                    No has subido ningún apunte todavía.
+                </div>
+            {% endif %}
+        {% endif %}
+
+        <script>
+            setTimeout(() => {
+                const alerts = document.querySelectorAll('.alert:not(.alert-persistente)');
+                alerts.forEach(alert => {
+                    alert.style.transition = 'opacity 0.5s ease-out';
+                    alert.style.opacity = '0';
+                    setTimeout(() => alert.remove(), 500);
+                });
+            }, 3500);
+        </script>
+    </div>
+{% endblock %}

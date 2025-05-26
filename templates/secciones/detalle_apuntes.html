@@ -1,0 +1,100 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}Detalle del Apuntes | EdukAI{% endblock %}
+{% block section_title %}<h3 class="text-white">Apun<span class="text-gradient">tes: {{ apunte.titulo }}</span></h3>{% endblock %}
+{% block content %}
+    <div class="container ">
+
+        <div class="card glass-card p-2">
+            <div class="d-flex justify-content-between align-items-center">
+                <h6 class="text-muted">Categoría: {{ apunte.categoria.nombre }}</h6>
+                <div id="mensaje-copiado"
+                     style="position: fixed; bottom: 20px; right: 20px; background: rgba(92,184,92,0.44); color: white; padding: 10px 20px; border-radius: 8px; display: none; box-shadow: 0px 4px 8px rgba(0,0,0,0.2); z-index: 1000;">
+                    ¡Texto copiado exitosamente!
+                </div>
+                {% if apunte.archivo %}
+                    <div>
+                        <a href="{{ apunte.archivo.url }}" class="bt_read_text" download> Descargar PDF
+                            original</a>
+                    </div>
+                {% endif %}
+
+                <button onclick="copyToClipboard('apunte_texto{{ apunte.id }}')" class="btcopy">Copiar Texto</button>
+            </div>
+
+            {% if apunte.texto %}
+                <div class="glass-box-pdf mt-2 ">
+                    <p class="text-light" id="apunte_texto{{ apunte.id }}">{{ apunte.texto|linebreaksbr }}</p>
+                </div>
+                <div class="d-flex justify-content-between align-items-center">
+                <a href="{% url 'mis_apuntes' %}" class="btn btn-outline-light mt-4">⬅ Ir a apuntes</a>
+
+                <form method="post" action="{% url 'eliminar_apunte' apunte.id %}"
+                      onsubmit="return confirm('¿Seguro que deseas eliminar este apunte y su resumen?');">
+                    {% csrf_token %}
+                    <button type="button" class="bt_delete_text mt-4" style="float: right" data-bs-toggle="modal"
+                            data-bs-target="#confirmarEliminacionModal"> Eliminar Apunte
+                    </button>
+                </form>
+            {% else %}
+                <div class="alert alert-warning mt-4">
+                    Este apunte no contiene texto extraído.
+                </div>
+            {% endif %}
+
+            </div>
+        </div>
+
+
+    </div>
+    <!-- Modal para confirmar borrado de apuntes-->
+    <div class="modal fade" id="confirmarEliminacionModal" tabindex="-1"
+         aria-labelledby="confirmarEliminacionModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content glass-card">
+                <div class="modal-header">
+                    <h5 class="modal-title text-white" id="confirmarEliminacionModalLabel">Confirmar
+                        eliminación</h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"
+                            aria-label="Cerrar"></button>
+                </div>
+                <div class="modal-body text-light">
+                    ¿Estás seguro de que deseas eliminar este apunte?. Se eliminará el resumen, preguntas e historial de resultados. Esta acción no se puede deshacer.
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="bt_read_text" data-bs-dismiss="modal">Cancelar</button>
+
+                    <form method="post" action="{% url 'eliminar_apunte' apunte.id %}">
+                        {% csrf_token %}
+                        <button type="submit" class="bt_delete_text">Eliminar</button>
+                    </form>
+
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        function copyToClipboard(texto_id) {
+            const copyText = document.getElementById(texto_id);
+            navigator.clipboard.writeText(copyText.innerText).then(() => {
+                    showCopyMessage()
+                }
+            ).catch(() => {
+                console.error('error copiando texto');
+                alert("No se a podido copiar el texto");
+            })
+
+
+        }
+
+        function showCopyMessage() {
+            const message = document.getElementById('mensaje-copiado');
+            message.style.display = 'block';
+            setTimeout(() => {
+                message.style.display = 'none';
+            }, 2500);
+        }
+    </script>
+{% endblock %}

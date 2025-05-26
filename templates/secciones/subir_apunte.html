@@ -1,0 +1,108 @@
+{% extends "base.html" %}
+{% load static %}
+{% load widget_tweaks %}
+
+{% block title %}Subir Apuntes | EdukAI{% endblock %}
+{% block extra_css %}
+    <link rel="stylesheet" href="{% static 'css/register.css' %}">
+{% endblock %}
+{% block section_title %}<h2 class="text-white">Subir Ap<span class="text-gradient">untes</span></h2>{% endblock %}
+{% block content %}
+    <div class="container">
+        <form method="post" enctype="multipart/form-data" class="glass-style p-4 rounded">
+            {% csrf_token %}
+            {% if messages %}
+                {% for message in messages %}
+                    <div class="alert alert-{{ message.tags }} alert-dismissible fade show" role="alert">
+                        {{ message }}
+                        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Cerrar"></button>
+                    </div>
+                {% endfor %}
+            {% endif %}
+
+            {% if form.non_field_errors %}
+                <div class="alert alert-danger" role="alert">
+                    {% for error in form.non_field_errors %}
+                        {{ error }}
+                    {% endfor %}
+                </div>
+            {% endif %}
+
+
+
+            <p style="font-size: 15px" class="text-white">
+                Puedes subir un archivo PDF o escribir un texto manualmente. Si deseas, EdukAI puede generar
+                automáticamente un título y categorizar tu apunte. Si prefieres personalizarlo, activa la opción
+                correspondiente.
+            </p>
+            {% csrf_token %}
+            <div class="form-check form-switch mb-4 text-start">
+                <input class="form-check-input" type="checkbox" id="modoTexto">
+                <label class="form-check-label" for="modoTexto" id="labelSwitch"></label>
+            </div>
+            <div class="mb-3" id="campoArchivo">
+                {{ form.archivo.label_tag }}
+                {{ form.archivo|add_class:"form-control" }}
+            </div>
+            <div class="mb-3" id="campoTexto">
+                {{ form.texto.label_tag }}
+                {{ form.texto|add_class:"form-control" }}
+            </div>
+            <div class="form-check form-switch mb-4 text-start">
+                <input class="form-check-input" type="checkbox" id="modoPersonalizar">
+                <label class="form-check-label" for="modoPersonalizar">
+                    Switch para personalizar título y categoría de tus apuntes.
+                </label>
+            </div>
+            <div id="personalizacionCampos" class="d-none">
+                <p>Puedes insertar un título y seleccionar una categoría para tus apuntes.(No te preocupes si no
+                    ingresas nada, EdukAI generará
+                    automáticamente un título y/o categoría por ti.)</p>
+                <div class="mb-3">
+                    {{ form.titulo.label_tag }}
+                    {{ form.titulo|add_class:"form-control" }}
+                </div>
+
+                <div class="mb-3">
+                    {{ form.categoria.label_tag }}
+                    {{ form.categoria|add_class:"form-control" }}
+                </div>
+            </div>
+            <button type="submit" class="btn btn-primary">Subir Archivo</button>
+        </form>
+    </div>
+    <script>
+        const modoTexto = document.getElementById("modoTexto");
+        const campoArchivo = document.getElementById("campoArchivo");
+        const campoTexto = document.getElementById("campoTexto");
+        const labelSwitch = document.getElementById("labelSwitch");
+        const campoPersonalizar = document.getElementById("personalizacionCampos");
+        const modoPersonalizar = document.getElementById("modoPersonalizar");
+
+        const actualizarVisibilidad = () => {
+            if (modoTexto.checked) {
+                campoArchivo.classList.add("d-none");
+                campoTexto.classList.remove("d-none");
+                postMessage("Ya puedes ingresas la informacion a resumir dentro del del campo de texto ")
+                labelSwitch.textContent = "Switch si deseas Subir archivo PDF";
+            } else {
+                campoArchivo.classList.remove("d-none");
+                campoTexto.classList.add("d-none");
+                labelSwitch.textContent = "Switch para insertar texto manualmente";
+            }
+        }
+        const actualizarPersonalizacion = () => {
+            if (modoPersonalizar.checked) {
+                campoPersonalizar.classList.remove("d-none");
+            } else {
+                campoPersonalizar.classList.add("d-none");
+            }
+        }
+
+        modoTexto.addEventListener("change", actualizarVisibilidad);
+        modoPersonalizar.addEventListener("change", actualizarPersonalizacion);
+        document.addEventListener("DOMContentLoaded", actualizarVisibilidad, actualizarPersonalizacion);
+    </script>
+
+
+{% endblock %}

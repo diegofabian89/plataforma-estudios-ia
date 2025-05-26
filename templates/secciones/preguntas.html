@@ -1,0 +1,37 @@
+{% extends "base.html" %}
+{% load static %}
+{% load widget_tweaks %}
+
+{% block title %}Mis Preguntas | EdukAI{% endblock %}
+{% block section_title %}<h3 class="text-white">Mis Preg<span class="text-gradient">untas Generadas</span></h3>{% endblock %}
+{% block content %}
+    <div class="container v-100">
+
+
+        {% if apuntes %}
+            <div class="row g-4">
+                {% for apunte in apuntes %}
+                    <div class="col-md-6 col-lg-4">
+                        <div class="card glass-card p-4 h-100">
+                            <h5 class="text-white">Test: {{ apunte.titulo|truncatechars:30 }}</h5>
+                            <small class="text-muted">{{ apunte.categoria }}</small>
+                            <div class="glass-box mt-3">
+                                <p class="text-muted">{{ apunte.ultima_pregunta }}</p>
+                            </div>
+                            <a href="{% url 'test_interactivo' apunte.id %}" class="btn btn-outline-light mt-3 w-100">Empezar
+                                Test Interactivo</a>
+                            <a href="{% url 'ver_test' apunte.id %}" class="btn btn-outline-light mt-3 w-100">
+                                Ver test
+                            </a>
+
+                        </div>
+                    </div>
+                {% endfor %}
+            </div>
+        {% else %}
+            <div class="alert alert-warning mt-4">
+                No has generado ningún Test todavía.
+            </div>
+        {% endif %}
+    </div>
+{% endblock %}

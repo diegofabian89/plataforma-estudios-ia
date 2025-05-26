@@ -1,16 +1,58 @@
-# Entorno virtual
-venv/
-*.pyc
-__pycache__/
-
-# Archivos del sistema
-.DS_Store
-*.sqlite3
-
-# Entornos de desarrollo
-.env
-.idea/
-.vscode/
-
 # Archivos compilados
 *.log
+# Byte-compiled / optimized / DLL files
+__pycache__/
+*.py[cod]
+*$py.class
+
+# Cython debug symbols
+cython_debug/
+
+# Django stuff:
+*.log
+*.pot
+*.pyc
+*.sqlite3
+db.sqlite3
+media/
+staticfiles/
+local_settings.py
+
+# Environments
+.env
+.venv/
+env/
+venv/
+ENV/
+
+# VSCode
+.vscode/
+
+# PyCharm
+.idea/
+
+# macOS
+.DS_Store
+
+# Windows
+Thumbs.db
+ehthumbs.db
+
+# Coverage reports
+htmlcov/
+.coverage
+.tox/
+.nox/
+.pytest_cache/
+
+# Migrations ()
+**/migrations/*.py
+**/migrations/*.pyc
+!**/migrations/__init__.py
+
+# Jupyter Notebook checkpoints
+.ipynb_checkpoints/
+
+# System files
+*.bak
+*.swp

@@ -1,5 +1,6 @@
 # EdukAI – Plataforma Inteligente para la Gestión de Apuntes
-![EdukAI Logo](static/img/logo_frontal.png)
+<img src="static/img/logo_frontal.png" alt="EdukAI Logo" width="150"/>  
+
 > Plataforma web educativa potenciada por Inteligencia Artificial que permite a los estudiantes subir apuntes, generar resúmenes automáticos, crear preguntas tipo test, y organizar su contenido de estudio de forma eficiente y personalizada.
 
 ---

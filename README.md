@@ -85,7 +85,7 @@ edukai/
 
 ##  Planificación y Gantt
 
-Consulta el progreso del proyecto y su planificación en el [Diagrama de Gantt](https://github.com/diegofabian89/plataforma-estudios-ia/blob/main/documentation/Screenshot%202025-05-26%20180725.png).
+Consulta el progreso del proyecto y su planificación en el [Diagrama de Gantt](https://github.com/diegofabian89/plataforma-estudios-ia/blob/main/documentation/Edukai_diagram_gantt.png).
 
 ---
 

@@ -28,8 +28,8 @@
             </div>
         {% endif %}
 
-        <div class="mb-3">
-            {{ form.username.label_tag }}
+        <div class="mb-3 text-muted">
+            {{ form.username.label_tag }} Sin espacios ejemplo: usuario.nombre, usuario_nombre
             {{ form.username }}
             {% if form.username.errors %}
                 <div class="text-danger">{{ form.username.errors.0 }}</div>

@@ -116,7 +116,7 @@ Uso educativo – Todos los derechos reservados © 2025.
 
 ##  Contacto
 
-**Antonio**  
+**DIEGO FABIAN**  
 Email: diegofabian1989@hotmail.es  
 
 GitHub: [@diegofabian89](https://github.com/diegofabian89/plataforma-estudios-ia.git)

@@ -325,12 +325,12 @@ def perfil_view(request):
     perfil, created = PerfilUsuario.objects.get_or_create(user=request.user)
     if request.method == 'POST':
         form = PerfilForm(request.POST, request.FILES, instance=perfil, user=request.user)
-        user = request.user
-        user.username = request.POST.get('username')
-        user.email = request.POST.get('email')
-        new_password = request.POST.get('new_password')
-
         if form.is_valid():
+            user = request.user
+            user.username = form.cleaned_data.get('username')
+            user.email = request.POST.get('email')
+            new_password = request.POST.get('new_password')
+
             user.save()
             perfil = form.save(commit=False)
 
@@ -373,9 +373,10 @@ def perfil_view(request):
             if not request.FILES.get('imagen') and not form.cleaned_data.get('eliminar_imagen'):
                 if not form.cleaned_data.get('avatar_default'):
                     perfil.avatar_default = perfil.avatar_default
-            perfil.save()
-            messages.success(request, "Perfil actualizado correctamente.")
-            return redirect('dashboard')
+        perfil.save()
+        messages.success(request, "Perfil actualizado correctamente.")
+        return redirect('dashboard')
+
     else:
         form = PerfilForm(instance=perfil, user=request.user)
 
@@ -416,6 +417,7 @@ def subir_apunte_view(request):
             apunte.usuario = request.user
             apunte.resumen = resumen_generado
             apunte.categoria = categoria
+            apunte.texto = texto_para_resumir
             apunte.save()
             messages.success(request,
                              f"Apunte subido y categorizado automáticamente como: {categoria.nombre} puedes ir a la seccion Mis Apuntes para verlos")
@@ -461,7 +463,6 @@ def detalle_apuntes_view(request, apunte_id):
 @login_required
 def eliminar_apunte_view(request, apunte_id):
     apunte = get_object_or_404(Apunte, id=apunte_id, usuario=request.user)
-    pregunta = get_object_or_404(Pregunta, id=apunte_id)
 
     if request.method == 'POST':
         apunte.delete()
